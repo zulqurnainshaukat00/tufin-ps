@@ -42,22 +42,40 @@ def main():
     cli_args = get_cli_args()
     setup_loggers(conf.dict('log_levels'), log_to_stdout=cli_args.debug)
 
-    ticket = sc_helper.get_ticket_by_id(8)
+    try:
+        ticket_info = sc_helper.read_ticket_info()
+    except ValueError:
+        logger.info('Assuming script was triggered from test')
+        sys.exit(0)
 
-    print(ticket.subject)
-    print(ticket.requester)
+    ticket = sc_helper.get_ticket_by_id(ticket_info.id)
 
-    user = sc_helper.get_user_by_username(ticket.requester)
-    print(user.last_name)
+    # ticket = sc_helper.get_ticket_by_id(8)
 
-    entscheidung = ticket.get_step_by_name("Re-Check").get_last_task().get_field_list_by_name("Ihre Entscheidung")[0]
+    # print(ticket.subject)
+    # print(ticket.requester)
+    #
+    # user = sc_helper.get_user_by_username(ticket.requester)
+    # print(user.last_name)
 
-    comment = "Requester: " + ticket.requester + "Titel: " + ticket.subject + "Entscheidung aus Schritt 2: " + entscheidung
+    entscheidung = ticket.get_step_by_name("Re-Check").get_last_task().get_field_list_by_name("Ihre Entscheidung")[0].text
 
-    update_ticket_field(ticket, comment)
+    urlaubstage = ticket.get_step_by_name("Urlaub in AERAsec").get_last_task().get_field_list_by_name("Wie Viel Tage brauchen Sie für Urlaub?")[0]
 
-    print(123)
-    print(234)
+    comment = "Requester: " + ticket.requester + "\nTitel: " + ticket.subject + "\nEntscheidung aus Schritt 2: " + entscheidung \
+              + "\nAnzahl Urlaubstage: " + urlaubstage
+
+    # update_ticket_field(ticket, comment)
+
+    ticket_handler = Secure_Change_API_Handler(ticket, ticket_info)
+    ticket_handler.register_action(Secure_Change_API_Handler.PRE_ASSIGNMENT_SCRIPT, update_ticket_field, ticket, comment)
+
+
+    try:
+        ticket_handler.run()
+    except (ValueError, IOError) as error:
+        logger.error('Failed to run Antragstellerinfos script. Error: %s', error)
+        sys.exit(1)
 
 
 if __name__ == '__main__':

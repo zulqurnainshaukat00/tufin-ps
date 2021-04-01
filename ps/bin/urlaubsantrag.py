@@ -60,7 +60,7 @@ def main():
 
     entscheidung = ticket.get_step_by_name("Re-Check").get_last_task().get_field_list_by_name("Ihre Entscheidung")[0].text
 
-    urlaubstage = ticket.get_step_by_name("Urlaub in AERAsec").get_last_task().get_field_list_by_name("Wie Viel Tage brauchen Sie für Urlaub?")[0]
+    urlaubstage = ticket.get_step_by_name("Urlaub in AERAsec").get_last_task().get_field_list_by_name("Wie Viel Tage brauchen Sie für Urlaub?")[0].text
 
     entscheidung2 = ticket.get_step_by_name("Überprüfen").get_last_task().get_field_list_by_name("Unterschrift mit Vor und Nachname")[0].text
 

@@ -64,8 +64,10 @@ def main():
 
     entscheidung2 = ticket.get_step_by_name("Überprüfen").get_last_task().get_field_list_by_name("Unterschrift mit Vor und Nachname")[0].text
 
+    resturlaub = ticket.get_step_by_name("Urlaub in AERAsec").get_last_task().get_field_list_by_name("Rest Urlaub")[0].text
+
     comment = "Requester: " + ticket.requester + "\nTitel: " + ticket.subject + "\nEntscheidung aus Schritt 2: " + entscheidung \
-              + "\nAnzahl Urlaubstage: " + urlaubstage + "\nEntscheidungstep3: " + entscheidung2
+              + "\nAnzahl Urlaubstage: " + urlaubstage + "\nEntscheidungstep3: " + entscheidung2 + "\nRestUrlaub" + resturlaub
 
     # update_ticket_field(ticket, comment)
 

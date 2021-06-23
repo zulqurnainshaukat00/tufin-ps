@@ -28,6 +28,8 @@ new_zone = st_helper.post_zone(neue_zone)
 
 print(new_zone) # output = zonen id
 
+ # test
+
 liste = zones.Zone_Entries_List
 
 block_liste = ("https://lists.blocklist.de/lists/imap.txt")
